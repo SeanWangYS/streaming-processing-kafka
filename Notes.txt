@@ -1,0 +1,38 @@
+參考文章：https://medium.com/@dogukannulu/data-engineering-end-to-end-project-1-7a7be2a3671
+
+
+used command:
+1. build airflow env
+docker-compose up -d
+
+2. build kafka and relative services
+docker-compose -f docker-compose-kafka.yml up -d
+
+3. install requirement.txt 還不知道要安裝到哪個airflow container
+
+4. build table in Cassandra
+docker exec -it cassandra /bin/bash
+cqlsh -u cassandra -p cassandra
+
+CREATE KEYSPACE spark_streaming WITH replication = {'class':'SimpleStrategy','replication_factor':1};
+
+CREATE TABLE spark_streaming.random_names(full_name text primary key, gender text, location text, city text, country text, postcode int, latitude float, longitude float, email text);
+
+DESCRIBE spark_streaming.random_names;
+
+
+5. put related script in dag folder
+
+6. copy the local PySpark script into the container
+docker cp spark_streaming.py spark_master:/opt/bitnami/spark/
+
+7.We should then access the Spark container and install the necessary JAR files under the jars directory. 
+These JAR files are pretty important while writing PySpark scripts to communicate with other services
+docker exec -it spark_master /bin/bash
+cd jars
+curl -O https://repo1.maven.org/maven2/com/datastax/spark/spark-cassandra-connector_2.12/3.3.0/spark-cassandra-connector_2.12-3.3.0.jar
+curl -O https://repo1.maven.org/maven2/org/apache/spark/spark-sql-kafka-0-10_2.13/3.3.0/spark-sql-kafka-0-10_2.13-3.3.0.jar
+
+8. submit the PySpark application and write the topic data to the Cassandra
+cd ..
+spark-submit --master local[2] --jars /opt/bitnami/spark/jars/spark-sql-kafka-0-10_2.13-3.3.0.jar,/opt/bitnami/spark/jars/spark-cassandra-connector_2.12-3.3.0.jar spark_streaming.py
