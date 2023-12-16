@@ -167,4 +167,5 @@ networks:
   kafka-network:
     driver: bridge
   airflow-kafka:
-    external: true
+    driver: bridge
+    # external: true

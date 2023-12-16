@@ -309,4 +309,5 @@ volumes:
 
 networks:
   airflow-kafka:
-    external: true
+    driver: bridge
+    # external: true

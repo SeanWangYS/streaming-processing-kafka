@@ -6,9 +6,9 @@ used command:
 docker-compose up -d
 
 2. build kafka and relative services
-docker-compose -f docker-compose-kafka.yml up -d
+docker-compose -f docker-compose-kafka.yaml up -d
 
-3. install requirement.txt 還不知道要安裝到哪個airflow container
+3. install requirement.txt 還不知道要安裝到哪個airflow container, 應該是worker
 
 4. build table in Cassandra
 docker exec -it cassandra /bin/bash
